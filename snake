@@ -1,0 +1,433 @@
+#include <stdio.h>
+
+#include <windows.h>
+
+#include <stdlib.h>
+
+#include <conio.h>
+
+#include <time.h>
+
+
+#define N 20
+
+#define M 40
+
+
+
+int i,j,Campo[N][M],x,y,Gy,Game,Sapos,a,b,var,dir,score,Highscore,Velocidade,id;
+
+
+
+FILE *f; // criando uma variavel F ponteiro do tipo arquivo
+
+
+struct Cobra{
+int Cobra;
+int Cabeca;
+int Rabo;
+};
+
+
+struct Cobra c;
+
+
+void InicializacaoCobra(){// aqui fica uma função que inicializa o corpo da cobra
+
+    f=fopen("highscore.txt","r");
+
+    fscanf(f,"%d",&Highscore); // ponteiro F = &Highsocre
+
+    fclose(f);
+
+
+
+    for(i=0;i<N;i++){ // estrutura repetição e matriz Campo[i][j] // inicio da criação do cenario
+
+        for(j=0;j<M;j++){
+
+            Campo[i][j]=0;
+
+        }
+
+    }
+
+
+
+    x=N/2;y=M/2; Gy = y; c.Cabeca = 5; c.Rabo =1; Game = 0,Sapos = 0,dir='d',score=0,Velocidade = 99;
+
+
+
+    for(i=0;i<c.Cabeca;i++){// estrutura repetição e matriz Campo[N][M] // inicio da criação do cenario
+
+        Gy++;
+
+        Campo[x][Gy-c.Cabeca] = i+1;
+
+    }
+
+}
+
+
+
+void print(){ // função que define os limites laterais do jogo
+
+    for(i=0;i<=M+1;i++){ //  estrutura de repetição
+
+        if(i==0){
+
+            printf("%c",201);
+
+        }else if(i==M+1){
+
+            printf("%c",187);
+
+        }else{
+
+            printf("%c",205);
+
+        }
+
+    }
+
+    printf("   Pontuacao Atual: %d  Recorde: %d  Tutorial",score,Highscore); //  aqui ele mostrará a pontuação atual e o record
+
+    printf("\n");
+
+
+
+    for(i=0;i<N;i++){
+
+        printf("%c",186);
+
+
+
+        for(j=0;j<M;j++){
+
+            if(Campo[i][j]==0) printf(" ");// teste de matriz// estrutura condicional
+
+            if(Campo[i][j]>0 && Campo[i][j]!=c.Cabeca) printf("%c",186);// define o formato do corpo da cobra
+
+            if(Campo[i][j]==c.Cabeca) printf("%c",178);// define o formato da cabeca
+
+            if(Campo[i][j]==-1) printf("%c",18);// define o formato do sapo
+
+            if(j==M-1) printf("%c\n",186);// parede lateral direita
+
+        }
+
+    }
+
+
+
+    for(i=0;i<=M+1;i++){
+
+        if(i==0){
+
+            printf("%c",200);// faz a quina inferior esquerda
+
+        }else if(i==M+1){
+
+            printf("%c",188);// faz a quina inferior direita
+
+        }else{
+
+            printf("%c",205); //  define a borda inferior
+
+        }
+
+    }
+
+}
+
+void ResetScreenPosition(){ // reseta a posição da tela
+
+    HANDLE hOut;
+
+    COORD Position;
+
+    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    Position.X = 0;
+
+    Position.Y = 0;
+
+    SetConsoleCursorPosition(hOut,Position);
+
+}
+
+
+
+
+
+void Random(){ // função que introduz aleatoriamente os sapos(comida)
+
+    srand(time(0));
+
+    a = 1+ rand() % 18;
+
+    b = 1 + rand() % 38;
+
+
+
+    if(Sapos == 0 && Campo[a][b]==0){ // estrutura condicional que altera o tamanho e velocidade da cobra
+
+        Campo[a][b]= -1;
+
+        Sapos = 1;
+
+        if(Velocidade>10 && score!=0) Velocidade = Velocidade - 5;
+
+    }
+
+}
+
+
+
+
+int getch_noblock(){
+
+    if(_kbhit())
+
+        return _getch();
+
+    else
+
+        return -1;
+
+}
+void GameOver(){ // função que finaliza o jogo
+
+    printf("\a");
+
+    Sleep(1500);
+
+    system("Cls");
+
+
+
+    if(score>Highscore){ //  testa se a pontação anterior é maior que a atual, gerando assim um record ou não
+
+        printf("  Novo Record %d!!!!!!\n\n",score);
+
+        system("pause");
+
+        f=fopen("highscore.txt","w");
+
+        fprintf(f,"%d",score);
+
+        fclose(f);
+
+    }
+
+
+
+    system("Cls");
+
+    printf("\n\n         Voce Perdeu !!!!!!\n");
+
+    printf("             Pontuacao : %d \n\n",score);
+
+    printf("             Pressione ENTER para jogar novamente ou ESC para sair ... \n");
+
+
+
+
+
+    while(1){
+
+        var = getch_noblock();
+
+        if(var == 13){
+
+            Game = 0;
+
+            InicializacaoCobra();
+
+            break;
+
+        }else if(var == 27){
+
+            Game = 1;
+
+            break;
+
+        }
+
+    }
+
+    system("Cls");
+
+}
+
+
+
+void movement(){ //  função que controla os movimentos que o usuario pode fazer
+
+    var = getch_noblock();
+
+    var = tolower(var);
+
+
+
+    if(((var=='d'||var=='a')||(var=='w'||var=='s')) //  define as teclas que podem ser digitadas
+
+       &&(abs(dir-var)>5)) dir = var;
+
+    if(dir =='d'){ // ação ao precionar a tecla "d"
+
+        y++;
+
+        if(Campo[x][y]!=0 && Campo[x][y]!=-1)
+        {GameOver();}
+
+        if(y==M-1) y = 0;
+
+        if(Campo[x][y]==-1){
+
+            Sapos = 0;
+
+            score+=5;
+
+            c.Rabo -= 2;
+
+        }
+
+
+
+        c.Cabeca++;
+
+        Campo[x][y] = c.Cabeca;
+
+    }
+
+
+
+    if(dir =='a'){//ação ao precionar a tecla "a"
+
+        y--;
+
+        if(Campo[x][y]!=0 && Campo[x][y]!=-1) GameOver();
+
+        if(y==0) y = M-1;
+
+        if(Campo[x][y]==-1){
+
+            Sapos = 0;
+
+            score+=5;
+
+            c.Rabo -= 2;
+
+        }
+
+        c.Cabeca++;
+
+        Campo[x][y] = c.Cabeca;
+
+    }
+
+
+
+    if(dir =='w'){//ação ao precionar a tecla "w"
+
+        x--;
+
+        if(Campo[x][y]!=0 && Campo[x][y]!=-1) GameOver();
+
+        if(x==-1) x = N-1;
+
+        if(Campo[x][y]==-1){
+
+            Sapos = 0;
+
+            score+=5;
+
+            c.Rabo -= 2;
+
+        }
+
+        c.Cabeca++;
+
+        Campo[x][y] = c.Cabeca;
+
+    }
+
+
+
+    if(dir =='s'){ //a ação ao precionar a tecla "s"
+
+        x++;
+
+        if(Campo[x][y]!=0 && Campo[x][y]!=-1) GameOver();
+
+        if(x==N) x = 0;
+
+        if(Campo[x][y]==-1){
+
+            Sapos = 0;
+
+            score+=5;
+
+            c.Rabo -= 2;
+
+        }
+
+        c.Cabeca++;
+
+        Campo[x][y] = c.Cabeca;
+
+    }
+
+}
+
+
+
+void TailRemove(){ // função que remove o rabo da cobra quando ela vira
+
+    for(i=0;i<N;i++){
+
+        for(j=0;j<M;j++){
+
+            if(Campo[i][j]==c.Rabo){
+
+                Campo[i][j] = 0;
+
+            }
+
+        }
+
+    }
+
+    c.Rabo++;
+
+}
+
+
+
+
+
+int main(){
+
+    InicializacaoCobra();
+
+
+
+    while(Game == 0){
+
+        print();
+
+        ResetScreenPosition();
+
+        Random();
+
+
+        movement();
+
+        TailRemove();
+
+        Sleep(Velocidade);
+
+    }
+
+}
