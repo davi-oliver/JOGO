@@ -11,7 +11,7 @@
 
 #define N 20
 
-#define M 40
+#define M 50
 
 
 
@@ -19,10 +19,10 @@ int i,j,Campo[N][M],x,y,Gy,Game,Sapos,a,b,var,dir,score,Highscore,Velocidade,id;
 
 
 
-FILE *f; // criando uma variavel F ponteiro do tipo arquivo
+FILE *f; // criando uma variavel F ponteiro do tipo arquivo vai receber o valor da melhor pontação e armazenar
 
-
-struct Cobra{
+//d
+struct Cobra{ // struct ou registro
 int Cobra;
 int Cabeca;
 int Rabo;
@@ -30,6 +30,8 @@ int Rabo;
 
 
 struct Cobra c;
+
+
 
 
 void InicializacaoCobra(){// aqui fica uma função que inicializa o corpo da cobra
@@ -90,7 +92,8 @@ void print(){ // função que define os limites laterais do jogo
 
     }
 
-    printf("   Pontuacao Atual: %d  Recorde: %d  Tutorial",score,Highscore); //  aqui ele mostrará a pontuação atual e o record
+    printf("   Pontuacao Atual: %d  Recorde: %d  Tutorial 'a' = esquerda, 'd'= direita, 'w'= subir, 's' = descer ",score,Highscore);
+     //  aqui ele mostrará a pontuação atual e o record
 
     printf("\n");
 
@@ -142,9 +145,9 @@ void print(){ // função que define os limites laterais do jogo
 
 void ResetScreenPosition(){ // reseta a posição da tela
 
-    HANDLE hOut;
+    HANDLE hOut; // TIPO DE VARIAVEL
 
-    COORD Position;
+    COORD Position; // TIPO DE VARIAVEL
 
     hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -152,7 +155,7 @@ void ResetScreenPosition(){ // reseta a posição da tela
 
     Position.Y = 0;
 
-    SetConsoleCursorPosition(hOut,Position);
+    SetConsoleCursorPosition(hOut,Position); // VAI SETAR A POSIÇÃO QUE FOI PEGA PELO (GetStdHandle)
 
 }
 
@@ -403,31 +406,53 @@ void TailRemove(){ // função que remove o rabo da cobra quando ela vira
 
 }
 
-
-
-
-
 int main(){
 
-    InicializacaoCobra();
+
+   InicializacaoCobra();// aqui fica uma função que inicializa o corpo da cobra
+                            // ponteiro F = &Highsocre
+                            //estrutura repetição e matriz Campo[i][j]
+                            // inicio da criação do cenario
 
 
 
-    while(Game == 0){
-
-        print();
-
-        ResetScreenPosition();
-
-        Random();
+    //d
+    while(Game == 0){ // estrutura que faz o controle do fim de jogo
+                    // enquanto a variavel  game  for = 0 O programa continua executando as funções abaixo
 
 
-        movement();
+       //d
+        print(); //função que define os limites laterais do jogo ou seja, O CENARIO
+        // Define o formato da cabeça, do rabo, do alimento(sapo)
 
-        TailRemove();
 
-        Sleep(Velocidade);
+        //t
+        ResetScreenPosition(); // reseta a posição da cobra no meio da tela
+
+
+        //g
+        Random(); //  é onde o alimento irá aparecer, no caso, de forma aleatória
+
+        //d
+        movement();// func que define os movimentos da cobra
+        // "a"<- esquerda   "d" -> direita      "w" == para cima   "s" ==  para baixo
+
+
+
+            //t
+        TailRemove();// função que remove o rabo da cobra ao fazer um movimento Ou quando atravessar uma parede
+
+
+             // g
+        Sleep(Velocidade);// função que define a velocidade da cobra
 
     }
 
 }
+
+
+
+
+
+
+
